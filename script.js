@@ -71,3 +71,37 @@ function showAll() {
     renderMedications(rawData);
 }
 
+let currentStatus = '全部';
+let searchQuery = '';
+
+// 核心過濾功能
+function filterData() {
+    searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    
+    const filtered = rawData.filter(med => {
+        const matchesStatus = (currentStatus === '全部' || med.status === currentStatus);
+        const matchesSearch = med.name.toLowerCase().includes(searchQuery) || 
+                              med.code.toLowerCase().includes(searchQuery);
+        return matchesStatus && matchesSearch;
+    });
+
+    renderMedications(filtered);
+}
+
+// 狀態切換功能
+function filterStatus(status) {
+    currentStatus = status;
+    
+    // 更新按鈕樣式
+    document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
+    if(status === '全部') document.getElementById('btn-all').classList.add('active');
+    if(status === '使用中') document.getElementById('btn-active').classList.add('active');
+    if(status === '已停用') document.getElementById('btn-inactive').classList.add('active');
+
+    filterData(); // 重新過濾並渲染
+}
+
+// 修改原本的 renderMedications 函數（保持不變，或確保它被正確調用）
+// 初始化
+renderMedications(rawData);
+
