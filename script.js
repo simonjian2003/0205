@@ -36,25 +36,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderMedications = (data) => {
         const listContainer = document.getElementById('medication-list');
         if (!listContainer) return;
-        
         listContainer.innerHTML = '';
-        data.forEach(med => {
-            const isActive = med.status === "使用中";
+
+        // --- 核心邏輯：依照藥碼 (code) 分組 ---
+        const groupedData = data.reduce((acc, med) => {
+            if (!acc[med.code]) {
+                acc[med.code] = [];
+            }
+            acc[med.code].push(med);
+            return acc;
+        }, {});
+
+        // 遍歷每個藥物組別
+        Object.keys(groupedData).forEach(code => {
+            const history = groupedData[code];
+            const latest = history[0]; // 假設第一筆是最新的
+            const isActive = history.some(m => m.status === "使用中");
+
             const card = document.createElement('div');
             card.className = `med-card ${isActive ? 'status-active' : 'status-inactive'}`;
+            
+            // 建立歷程 HTML
+            let historyHtml = history.map(h => `
+                <div class="history-item ${h.status === '使用中' ? 'text-active' : 'text-inactive'}">
+                    <div class="history-date">📅 ${h.start} ${h.end ? '～ ' + h.end : '(持續中)'}</div>
+                    <div class="med-grid">
+                        <div><strong>用法:</strong> ${h.dose} (${h.mg})</div>
+                        <div><strong>頻次:</strong> ${h.freq} (${h.route})</div>
+                        <div><strong>天數:</strong> ${h.days}天</div>
+                        <div><strong>狀態:</strong> ${h.status}</div>
+                    </div>
+                    ${h.note ? `<div class="note-box">💡 ${h.note}</div>` : ''}
+                </div>
+            `).join('<hr class="history-divider">');
+
             card.innerHTML = `
                 <div class="med-header">
-                    <span class="med-name">${med.name}</span>
-                    <span class="badge ${isActive ? 'bg-active' : 'bg-inactive'}">${med.status}</span>
+                    <span class="med-name">${latest.name}</span>
+                    <span class="badge ${isActive ? 'bg-active' : 'bg-inactive'}">
+                        ${isActive ? '使用中' : '已停用'}
+                    </span>
                 </div>
-                <div class="time-range">🗓️ ${med.start} ${med.end ? '～ ' + med.end : '(持續使用中)'}</div>
-                <div class="med-grid">
-                    <div><strong>單次量:</strong> ${med.dose} (${med.mg})</div>
-                    <div><strong>途徑:</strong> ${med.route}</div>
-                    <div><strong>頻次:</strong> ${med.freq}</div>
-                    <div><strong>天數:</strong> ${med.days}天</div>
+                <div class="med-code-label">藥碼: ${code}</div>
+                <div class="history-container">
+                    ${historyHtml}
                 </div>
-                ${med.note ? `<div class="note-box"><strong>醫囑:</strong> ${med.note}</div>` : ''}
             `;
             listContainer.appendChild(card);
         });
