@@ -33,58 +33,70 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentStatus = '全部';
 
     // 2. 渲染函數
-    const renderMedications = (data) => {
-        const listContainer = document.getElementById('medication-list');
-        if (!listContainer) return;
-        listContainer.innerHTML = '';
+const renderMedications = (data) => {
+    const listContainer = document.getElementById('medication-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '';
 
-        // --- 核心邏輯：依照藥碼 (code) 分組 ---
-        const groupedData = data.reduce((acc, med) => {
-            if (!acc[med.code]) {
-                acc[med.code] = [];
-            }
-            acc[med.code].push(med);
-            return acc;
-        }, {});
+    // 1. 核心分組邏輯：將相同 code 的藥物放在一個陣列裡
+    const groups = {};
+    data.forEach(item => {
+        const key = item.code.trim(); // 移除可能影響分組的空格
+        if (!groups[key]) {
+            groups[key] = [];
+        }
+        groups[key].push(item);
+    });
 
-        // 遍歷每個藥物組別
-        Object.keys(groupedData).forEach(code => {
-            const history = groupedData[code];
-            const latest = history[0]; // 假設第一筆是最新的
-            const isActive = history.some(m => m.status === "使用中");
+    // 2. 遍歷分組並渲染
+    Object.keys(groups).forEach(code => {
+        const history = groups[code];
+        
+        // 依照日期排序 (由新到舊)
+        history.sort((a, b) => new Date(b.start) - new Date(a.start));
 
-            const card = document.createElement('div');
-            card.className = `med-card ${isActive ? 'status-active' : 'status-inactive'}`;
-            
-            // 建立歷程 HTML
-            let historyHtml = history.map(h => `
-                <div class="history-item ${h.status === '使用中' ? 'text-active' : 'text-inactive'}">
-                    <div class="history-date">📅 ${h.start} ${h.end ? '～ ' + h.end : '(持續中)'}</div>
-                    <div class="med-grid">
-                        <div><strong>用法:</strong> ${h.dose} (${h.mg})</div>
-                        <div><strong>頻次:</strong> ${h.freq} (${h.route})</div>
-                        <div><strong>天數:</strong> ${h.days}天</div>
-                        <div><strong>狀態:</strong> ${h.status}</div>
-                    </div>
-                    ${h.note ? `<div class="note-box">💡 ${h.note}</div>` : ''}
+        // 只要歷程中有一筆是「使用中」，整個 BOX 就標示為使用中
+        const isActive = history.some(m => m.status === "使用中");
+        const latestMed = history[0]; // 取得最新一筆的名稱
+
+        const card = document.createElement('div');
+        card.className = `med-card ${isActive ? 'status-active' : 'status-inactive'}`;
+
+        // 產生內部的歷程清單 HTML
+        const historyHtml = history.map(h => `
+            <div class="history-item ${h.status === '使用中' ? 'active-row' : 'inactive-row'}">
+                <div class="history-meta">
+                    <span class="status-dot"></span>
+                    <strong>${h.status}</strong> 
+                    <span class="history-date">${h.start} ${h.end ? '～ ' + h.end : '(持續中)'}</span>
                 </div>
-            `).join('<hr class="history-divider">');
+                <div class="med-grid">
+                    <div>用法: ${h.dose} (${h.mg})</div>
+                    <div>頻次: ${h.freq} / ${h.route}</div>
+                    <div>天數: ${h.days}天</div>
+                    <div>總量: ${h.total}</div>
+                </div>
+                ${h.note ? `<div class="note-box">囑咐: ${h.note}</div>` : ''}
+            </div>
+        `).join('<div class="history-divider"></div>');
 
-            card.innerHTML = `
-                <div class="med-header">
-                    <span class="med-name">${latest.name}</span>
-                    <span class="badge ${isActive ? 'bg-active' : 'bg-inactive'}">
-                        ${isActive ? '使用中' : '已停用'}
-                    </span>
+        card.innerHTML = `
+            <div class="med-header">
+                <div>
+                    <div class="med-name">${latestMed.name}</div>
+                    <div class="med-code-label">藥品代碼: ${code}</div>
                 </div>
-                <div class="med-code-label">藥碼: ${code}</div>
-                <div class="history-container">
-                    ${historyHtml}
-                </div>
-            `;
-            listContainer.appendChild(card);
-        });
-    };
+                <span class="badge ${isActive ? 'bg-active' : 'bg-inactive'}">
+                    ${isActive ? '使用中' : '已停用'}
+                </span>
+            </div>
+            <div class="history-container">
+                ${historyHtml}
+            </div>
+        `;
+        listContainer.appendChild(card);
+    });
+};
 
     // 3. 過濾功能（掛載到 window 以便 HTML 呼叫）
     window.filterData = () => {
