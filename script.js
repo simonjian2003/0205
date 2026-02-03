@@ -60,6 +60,14 @@ function renderMedications(data) {
         listContainer.appendChild(card);
     });
 }
+// 只顯示使用中的藥物
+function showActiveOnly() {
+    const activeMeds = rawData.filter(m => m.status === "使用中");
+    renderMedications(activeMeds);
+}
 
-renderMedications(rawData);
+// 顯示所有藥物
+function showAll() {
+    renderMedications(rawData);
+}
 
