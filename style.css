@@ -138,3 +138,36 @@ header {
 @media (max-width: 600px) {
     #searchInput { width: 100%; }
 }
+/* 歷程容器 */
+.history-container {
+    margin-top: 15px;
+}
+
+.history-item {
+    padding: 10px 0;
+}
+
+.history-date {
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+.history-divider {
+    border: 0;
+    border-top: 1px dashed #ddd;
+    margin: 10px 0;
+}
+
+.med-code-label {
+    font-size: 0.8em;
+    color: #999;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+/* 狀態文字顏色 */
+.text-active { border-left: 3px solid var(--active-color); padding-left: 10px; }
+.text-inactive { border-left: 3px solid var(--inactive-color); padding-left: 10px; opacity: 0.8; }
+
