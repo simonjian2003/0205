@@ -90,3 +90,51 @@ header {
     font-size: 0.85em;
     color: #666;
 }
+.controls {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+#searchInput {
+    padding: 10px 15px;
+    width: 300px;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+#searchInput:focus {
+    border-color: #3498db;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn {
+    padding: 8px 15px;
+    border: none;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover { background: #f0f0f0; }
+
+.btn.active {
+    background: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+
+/* 針對移動端微調 */
+@media (max-width: 600px) {
+    #searchInput { width: 100%; }
+}
