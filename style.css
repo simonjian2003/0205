@@ -143,9 +143,46 @@ header {
     margin-top: 15px;
 }
 
+/* 讓同藥物 Box 內的每筆紀錄更有條理 */
 .history-item {
-    padding: 10px 0;
+    padding: 12px;
+    margin: 5px 0;
+    border-radius: 6px;
 }
+
+.active-row {
+    background-color: rgba(39, 174, 96, 0.05);
+    border-left: 4px solid var(--active-color);
+}
+
+.inactive-row {
+    background-color: #f9f9f9;
+    border-left: 4px solid var(--inactive-color);
+    color: #777;
+}
+
+.history-divider {
+    height: 1px;
+    background: linear-gradient(to right, #eee, transparent);
+    margin: 8px 0;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.active-row .status-dot { background-color: var(--active-color); }
+.inactive-row .status-dot { background-color: var(--inactive-color); }
+
+.history-meta {
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
 
 .history-date {
     font-weight: bold;
