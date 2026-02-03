@@ -1,23 +1,17 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>病人藥物使用歷程</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>藥物使用歷程</h1>
-            <div class="patient-info">
-                <span>病人姓名：廖o芬</span> | <span>病歷號：21256559</span>
-            </div>
-        </header>
-
-        <main id="medication-list">
-            </main>
+<header>
+    <h1>藥物使用歷程</h1>
+    <div class="patient-info">
+          <span>病人姓名：廖o芬</span> | <span>病歷號：21256559</span>
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
+
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="搜尋藥名或藥碼..." onkeyup="filterData()">
+        <div class="filter-buttons">
+            <button onclick="filterStatus('全部')" class="btn active" id="btn-all">全部</button>
+            <button onclick="filterStatus('使用中')" class="btn" id="btn-active">使用中</button>
+            <button onclick="filterStatus('已停用')" class="btn" id="btn-inactive">已停用</button>
+        </div>
+    </div>
+</header>
+
+              
